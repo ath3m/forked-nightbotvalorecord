@@ -1,19 +1,34 @@
-# Valorant Record Command
-Script(s) to accompany data from api.henrikdev.xyz for use in a chatbot !record command. See more about the underlying HenrikDev API here: https://github.com/Henrik-3/unofficial-valorant-api
+# NightBot Valorant !record command
+External script to accompany Valorant !record command for NightBot on Twitch channels. 
+Commands in NightBot are restricted to Twitch chat's 500-character limit. So, this command is implemented in an external script and a remote url is called to retrieve this JS snippet.
 
+`!record` command is used to display Win-Loss-Draw stats for Valorant games played for the duration of a stream. Valorant match data of the player is retrieved from api.henrikdev.xyz
 
 ## Usage Example (Nightbot)
-```!addcom !record $(touser), $(eval $(urlfetch json https://raw.githubusercontent.com/nosrettep/ValorantNightbot/main/script.js)('$(twitch $(channel) "{{uptimeLength}}")','$(twitch $(channel) "{{uptimeAt}}")',"$(querystring $(urlfetch json https://api.henrikdev.xyz/valorant/v1/mmr-history/na/username/tag))", 'PlayerName')) | His current rank is $(customapi https://api.kyroskoh.xyz/valorant/v1/mmr/na/username/tag).```
+```!addcom !record $(touser), $(eval $(urlfetch json https://raw.githubusercontent.com/ath3m/nightbot-valorecord/main/script.js)('$(twitch $(channel) "{{uptimeLength}}")','$(twitch $(channel) "{{uptimeAt}}")',$(urlfetch json https://api.henrikdev.xyz/valorant/v1/lifetime/mmr-history/{region}/{name}/{tag}?size=20), $(urlfetch json https://api.henrikdev.xyz/valorant/v1/lifetime/matches/{region}/{name}/{tag}?mode=competitive&size=20))).```
  
- Will produce something similar to:
+ Expected response:
  ```
- Justin is UP 46RR this stream. Currently 4W - 1L - 0D. | His current rank is Immortal 3 - 473RR. 
+ Today's Win/Loss/Draw record is 3 - 1 - 0. (+47RR) 
  ```
+## Getting Started
+To start using the command:
 
-Note that in the above example, `username` should be replaced with the player's Riot username, `tag` should be replaced with the player's Riot tag, and `PlayerName` should be replaced with whatever name the bot should use to refer to the player / streamer.
+`region` should be replaced with the player's region (eu, na, latam, br, ap, kr).
 
+`name` should be replaced with the player's Riot username.
 
-## Limitations
-The !record command assumes that every 0 RR match is a draw, every positive RR match is a win, and every negative RR match is a loss. It cannot tell apart losses from draws which have small amounts of negative RR, for example. Additionally, it only can see 20 games worth of data at maximum. 
+`tag` should be replaced with the player's Riot tag.
 
-Additionally, if the stream begins with an L with loss protection (bringing them to 0 RR), or if they begin the stream with a rank up game, and get boosted up to 10 RR in their division  with a promotion bonus, the reported RR change value for the stream can be off by a small amount.
+`size` Since the APIs fetch data of matches dating ~2 months, it is suggested to limit the size between 20-30 (It is also unlikely !record  of >30 games would be needed per stream).
+
+`mode` can be replaced based on preference (competitive, custom, deathmatch, escalation, teamdeathmatch, replication, snowballfight, spikerush, swiftplay, unrated). Remove query from url for all.
+
+## Contributing
+The main intention was to use NightBot's custom command features and so this may not be the best implementation for this task.
+However, if you would like to improve this solution, feel free to contribute by submitting a pull request!
+
+## Credits
+Check out HenrikDev API here: https://github.com/Henrik-3/unofficial-valorant-api
+
+Originally forked from https://github.com/nosrettep/ValorantRecordCommand
